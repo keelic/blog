@@ -11,8 +11,8 @@
 线程不同步问题已经在相关部分分析清楚了。  
 
 `fail-fast`与`ConcurrentModificationException异常`是与iterator迭代器相关的：  
-如果iterator迭代器A一旦创建，就不允许通过任何`外界方法`对其所迭代的实例作结构性修改；
-否则，在迭代过程中会立即抛出ConcurrentModificationException异常；
+如果iterator迭代器A一旦创建，就不允许通过任何`外界方法`对其所迭代的实例作结构性修改；  
+否则，在迭代过程中会立即抛出ConcurrentModificationException异常；  
 注意，上述所说的`外界方法`指迭代器实例A之外的任何方法，包括实例本身的方法以及其它迭代器的方法。
 
 ## 1. 回顾结构性改变

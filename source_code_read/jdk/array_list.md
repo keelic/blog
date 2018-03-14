@@ -21,3 +21,36 @@ private int size;
 /** 默认容量大小 */
 private static final int DEFAULT_CAPACITY = 10;
 ```
+
+## 2. 三个构造函数
+```java
+/** 指定初始容量大小，new一个指定大小的数组，用于存放元素 */
+public ArrayList(int initialCapacity) {
+    if (initialCapacity > 0) {
+        this.elementData = new Object[initialCapacity];
+    } else if (initialCapacity == 0) {
+        this.elementData = EMPTY_ELEMENTDATA;
+    } else {
+        throw new IllegalArgumentException("Illegal Capacity: "+
+                                           initialCapacity);
+    }
+}
+
+/** 没有指定容量大小，则使用默认容量10，在第一次调用add添加元素时才会实际new一个大小为10的数组 */
+public ArrayList() {
+    this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+}
+
+/** 传入一个集合时，调用其toArray()方法对elementData进行初始化 */
+public ArrayList(Collection<? extends E> c) {
+    elementData = c.toArray();
+    if ((size = elementData.length) != 0) {
+        // c.toArray might (incorrectly) not return Object[] (see 6260652)
+        if (elementData.getClass() != Object[].class)
+            elementData = Arrays.copyOf(elementData, size, Object[].class);
+    } else {
+        // replace with empty array.
+        this.elementData = EMPTY_ELEMENTDATA;
+    }
+}
+```

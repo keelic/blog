@@ -82,4 +82,6 @@ private void grow(int minCapacity) {
 }
 ```
 
+`public boolean addAll(Collection<? extends E> c)`方法扩容流程与add方法一样：先调用`ensureCapacityInternal(size + len(c))`方法保证底层数组容量够用，然后完成数组拷贝。
+
 除了以上说的add/addAll能引发扩容操作之外，ArrayList还提供了供外部调用的扩容方法`ensureCapacity(int minCapacity)`，允许我们自己灵活的实现扩容操作。其底层依然是调用`private void grow(int minCapacity)`方法来完成动态扩容。**注意：** `ensureCapacity`方法不是list接口定义的方法，使用时需要将先对象转换成ArrayList。在需要多次调用add/addAll方法（`尤其是for循环中调用`）的场景中可以有效避免多次数据拷贝，提高效率，当然前提是可以大概预测出所需容量大小。

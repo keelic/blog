@@ -56,12 +56,29 @@ public ArrayList(Collection<? extends E> c) {
 ```
 
 ## 3. 动态扩容策略
-每次调用add/addAll方法向list中添加`k个元素`时，首先要检查当前可用容量是否足够。如果不够`即elementData.length - size < k`，则要先作动态扩容操作。
+每次调用add/addAll方法向list中添加`k个元素`时，首先要检查当前可用容量是否足够。如果不够`（即elementData.length - size < k）`，则要先作动态扩容操作。
 ```java
 public boolean add(E e) {
     //保证容量足够，不够时进行动态扩容
     ensureCapacityInternal(size + 1);  // Increments modCount!!
     elementData[size++] = e;
     return true;
+}
+
+/** ensureCapacityInternal方法如果判断需要扩容，则会调用一个私有方法grow来完成扩容操作 */
+private void grow(int minCapacity) {
+    // overflow-conscious code
+    int oldCapacity = elementData.length;
+    // 尝试增加1/2容量
+    int newCapacity = oldCapacity + (oldCapacity >> 1);
+    // 新增1/2以后如果不够用，尝试将扩容大小设置为所需容量的最小值
+    if (newCapacity - minCapacity < 0)
+        newCapacity = minCapacity;
+    // 如果所需容量大于MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8时，则将扩展容量设置为Integer.MAX_VALUE
+    if (newCapacity - MAX_ARRAY_SIZE > 0)
+        newCapacity = hugeCapacity(minCapacity);
+    // minCapacity is usually close to size, so this is a win:
+    // 新建用于存放元素的数组，将当前elementData中的元素拷贝到新数组中。拷贝完成后，旧数组将会被GC自动回收
+    elementData = Arrays.copyOf(elementData, newCapacity);
 }
 ```

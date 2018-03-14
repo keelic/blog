@@ -54,3 +54,14 @@ public ArrayList(Collection<? extends E> c) {
     }
 }
 ```
+
+## 3. 动态扩容策略
+每次调用add/addAll方法向list中添加`k个元素`时，首先要检查当前可用容量是否足够。如果不够`即elementData.length - size < k`，则要先作动态扩容操作。
+```java
+public boolean add(E e) {
+    //保证容量足够，不够时进行动态扩容
+    ensureCapacityInternal(size + 1);  // Increments modCount!!
+    elementData[size++] = e;
+    return true;
+}
+```

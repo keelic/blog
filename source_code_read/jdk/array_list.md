@@ -10,10 +10,10 @@ keelic
 ---
 
 ## 0 简介
-ArrayList是List接口的一种实现，其底层数据结构是一个Object[]数组。    
+ArrayList是List接口的一种实现，其底层数据结构是一个Object[]数组。  
 特点：  
-1. get/set的随机访问很快，得益于数组随机访问的高效率；
-2. add/remove效率没有LinkedList高，极有可能需要动态扩容与数据移位；
+1.get/set的随机访问很快，得益于数组随机访问的高效率；
+2.add/remove效率没有LinkedList高，极有可能需要动态扩容与数据移位；
 
 ## 1 重要属性
 ```java

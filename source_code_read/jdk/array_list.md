@@ -25,7 +25,7 @@ private static final int DEFAULT_CAPACITY = 10;
 protected transient int modCount = 0;
 ```
 
-`modCount`属性在ArrayList的父类AbstractList中，它用于标记实例发生`结构性改变`的次数。但凡在方法（例如：remove/add）的实现中对modCount作了修改，那就说明这个方法的调用会发生结构性改变。
+`modCount`属性在ArrayList的父类AbstractList中，它用于标记实例发生`结构性改变`的次数。但凡在方法（例如：remove/add）的实现中对modCount作了修改，那就说明这个方法的调用会发生结构性改变。[4. 并发安全性](#并发安全性)
 
 ## 2. 三个构造函数
 ```java

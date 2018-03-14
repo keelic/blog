@@ -20,7 +20,12 @@ transient Object[] elementData;
 private int size;  
 /** 默认容量大小 */
 private static final int DEFAULT_CAPACITY = 10;
+
+/** 该属性是ArrayList的父类AbstractList的属性，它标记着实例发生结构性改变的次数 */
+protected transient int modCount = 0;
 ```
+
+`modCount`属性在ArrayList的父类AbstractList中，它用于标记实例发生`结构性改变`的次数。但凡在方法（例如：remove/add）的实现中对modCount作了修改，那就说明这个方法的调用会发生结构性改变。
 
 ## 2. 三个构造函数
 ```java
@@ -95,3 +100,21 @@ List list = Collections.synchronizedList(new ArrayList(...));
 ```
 
 **结构性改变：** 包括任何新增、删除，以及改变底层数组elementData容量大小的操作。注意，仅仅是调用`set(int index, E element)`方法设置元素的值不属于`结构性改变`范畴。
+
+判断某个操作是否为`结构性改变`的终极方法：是否会修改modCount属性值。如下：
+```java
+public E remove(int index) {
+    rangeCheck(index);
+    // 改变modCount属性值，说明remove方法会导致结构性改变
+    modCount++;
+    E oldValue = elementData(index);
+
+    int numMoved = size - index - 1;
+    if (numMoved > 0)
+        System.arraycopy(elementData, index+1, elementData, index,
+                         numMoved);
+    elementData[--size] = null; // clear to let GC do its work
+
+    return oldValue;
+}
+```

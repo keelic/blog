@@ -89,4 +89,4 @@ private void grow(int minCapacity) {
 ## 4. 并发安全性
 ArrayList的实现不是同步的(not synchronized)，多个线程同时访问同一个ArrayList实例时，只要有任何一个线程在对该实例作`结构性改变`，我们都**必须**在外部对该实例进行同步处理。  
 
-**结构性改变：** 任何新增、删除，以及改变底层数组elementData容量大小的操作；注意，仅仅是调用`set(int index, E element)`方法设置元素的值不属于`结构性改变`范畴。
+**结构性改变：** 包括任何新增、删除，以及改变底层数组elementData容量大小的操作。注意，仅仅是调用`set(int index, E element)`方法设置元素的值不属于`结构性改变`范畴。

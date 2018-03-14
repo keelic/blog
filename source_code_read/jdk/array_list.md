@@ -17,11 +17,10 @@ ArrayList是List接口的一种实现，其底层数据结构是一个Object[]�
 
 ## 1. 重要属性
 ```java
-/** ArrayList实际存储元素的结构 */
+/** ArrayList实际存储元素的数组 */
 transient Object[] elementData;
 /** list包含元素个数 */
 private int size;  
 /** 默认容量大小 */
 private static final int DEFAULT_CAPACITY = 10;
-/**  */
 ```

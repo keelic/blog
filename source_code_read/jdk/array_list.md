@@ -1,4 +1,4 @@
-## ArrayList源码阅读(jdk8)
+# ArrayList源码阅读(jdk8)
 
 **作者：** keelic  
 **日期：** 2018-03-14  

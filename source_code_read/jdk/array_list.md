@@ -67,7 +67,6 @@ public boolean add(E e) {
 
 /** ensureCapacityInternal方法如果判断需要扩容，则会调用一个私有方法grow来完成扩容操作 */
 private void grow(int minCapacity) {
-    // overflow-conscious code
     int oldCapacity = elementData.length;
     // 尝试增加1/2容量
     int newCapacity = oldCapacity + (oldCapacity >> 1);
@@ -77,7 +76,6 @@ private void grow(int minCapacity) {
     // 如果所需容量大于MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8时，则将扩展容量设置为Integer.MAX_VALUE
     if (newCapacity - MAX_ARRAY_SIZE > 0)
         newCapacity = hugeCapacity(minCapacity);
-    // minCapacity is usually close to size, so this is a win:
     // 新建用于存放元素的数组，将当前elementData中的元素拷贝到新数组中。拷贝完成后，旧数组将会被GC自动回收
     elementData = Arrays.copyOf(elementData, newCapacity);
 }

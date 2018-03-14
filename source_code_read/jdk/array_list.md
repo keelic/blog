@@ -87,5 +87,5 @@ private void grow(int minCapacity) {
 除了以上说的add/addAll能引发扩容操作之外，ArrayList还提供了供外部调用的扩容方法`ensureCapacity(int minCapacity)`，允许我们自己灵活的实现扩容操作。其底层依然是调用`private void grow(int minCapacity)`方法来完成动态扩容。**注意：** `ensureCapacity`方法不是list接口定义的方法，使用时需要将先对象转换成ArrayList。在需要多次调用add/addAll方法（`尤其是for循环中调用`）的场景中可以有效避免多次数据拷贝，提高效率，当然前提是可以大概预测出所需容量大小。
 
 ## 4. 并发安全性
-ArrayList的实现不是同步的(not synchronized)，多个线程同时访问同一个ArrayList实例时，只要有任何一个线程在对该实例作`结构性改变`，我们都**必须**在外部对该实例进行同步处理。  
-**结构性改变：**任何新增、删除，以及改变底层数组elementData容量大小的操作；注意，仅仅是调用`set(int index, E element)`方法设置元素的值不属于`结构性改变`范畴。
+ArrayList的实现不是同步的(not synchronized)，多个线程同时访问同一个ArrayList实例时，只要有任何一个线程在对该实例作`结构性改变`，我们都**必须**在外部对该实例进行同步处理。  
+**结构性改变：** 任何新增、删除，以及改变底层数组elementData容量大小的操作；注意，仅仅是调用`set(int index, E element)`方法设置元素的值不属于`结构性改变`范畴。

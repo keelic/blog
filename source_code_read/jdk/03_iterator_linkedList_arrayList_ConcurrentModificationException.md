@@ -13,7 +13,7 @@
 `fail-fast`与`ConcurrentModificationException异常`是与iterator迭代器相关的：  
 如果iterator迭代器A一旦创建，就不允许通过任何`外界方法`对其所迭代的实例作结构性修改；  
 否则，在迭代过程中会立即抛出ConcurrentModificationException异常；  
-注意，上述所说的`外界方法`指迭代器实例A之外的任何方法，包括__实例本身的方法__以及__其它迭代器__ 的方法。
+注意，上述所说的`外界方法`指迭代器实例A之外的任何方法，包括 __实例本身的方法__ 以及 __其它迭代器__ 的方法。
 
 ## 1. 回顾结构性改变
 ArrayList/LinkedList共同的父类AbstractList中维护了一个公共属性`protected transient int modCount`。
@@ -119,7 +119,10 @@ public void remove() {
 
 LinkedList以及ListItr等其它迭代器不展开分析了，道理一样。  
 
-## 3. 三段小代码加深理解
+## 3. 四段小代码加深理解
+前面讲述到，所谓`外界方法`包含两部分：1.迭代器所迭代的list实例本身的方法；2.其它迭代器的方法；  
+
+迭代过程中调用list实例本身的方法会引发ConcurrentModificationException异常
 ```java
     /**
      * 会引发ConcurrentModificationException
@@ -184,4 +187,17 @@ LinkedList以及ListItr等其它迭代器不展开分析了，道理一样。
             itr.remove();
         }
     }
+```
+
+防止多个迭代器存在，在迭代过程中需要对list实例上锁，保证同一时刻只有一个迭代器存在。
+```java
+List list = Collections.synchronizedList(new ArrayList());
+    ...
+synchronized (list) {
+    // 注意：获取迭代器的iterator()方法必须在同步代码块内部
+    Iterator i = list.iterator(); // Must be in synchronized block
+    
+    while (i.hasNext())
+        foo(i.next());
+}
 ```

@@ -13,7 +13,7 @@
 `fail-fast`与`ConcurrentModificationException异常`是与iterator迭代器相关的：  
 如果iterator迭代器A一旦创建，就不允许通过任何`外界方法`对其所迭代的实例作结构性修改；  
 否则，在迭代过程中会立即抛出ConcurrentModificationException异常；  
-注意，上述所说的`外界方法`指迭代器实例A之外的任何方法，包括实例本身的方法以及其它迭代器的方法。
+注意，上述所说的`外界方法`指迭代器实例A之外的任何方法，包括__实例本身的方法__以及__其它迭代器__ 的方法。
 
 ## 1. 回顾结构性改变
 ArrayList/LinkedList共同的父类AbstractList中维护了一个公共属性`protected transient int modCount`。

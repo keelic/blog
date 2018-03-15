@@ -201,3 +201,5 @@ synchronized (list) {
         foo(i.next());
 }
 ```
+
+放置一个问题：Collections.synchronizedList内部肯定有锁，上述最后一段代码中同步代码块对list实例上锁，那么这两个被锁的对象是同一个吗？如果在上述同步代码块中调用list实例本身的方法，会发生死锁吗？

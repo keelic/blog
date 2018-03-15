@@ -7,12 +7,22 @@
 ---
 
 ## 0. 概述
-ArrayList和LinkedList的实现不是同步的。在一方对非同步list进行遍历，而另一方对其进行修改时，会抛出ConcurrentModificationExcpetion异常。  
-但是，这还不是唯一的问题，另外一个问题是**多个线程对非同步list进行并发修改时，会导致数据丢失。**  
+ArrayList和LinkedList的实现不是同步的。主要存在两个方面的问题：
+1. 在一方对非同步list进行遍历，而另一方对其进行修改时`（包括调用list本身的方法修改）`，
+会抛出ConcurrentModificationExcpetion异常。  
+2. 多个线程对非同步list进行并发修改时，会导致数据丢失。
 
-CopyOnWriteArrayList与Collections#synchronizedList是用来解决同步修改导致数据丢失的两种解决方案。各有优劣。
+围绕着解决这两个问题，jdk提供了Collections#synchronizedList同步包装方法和CopyOnWriteArrayList并发类。  
+总的来说，它们有如下特点：  
+1. Collections#synchronizedList方案解决了问题2，但是问题1依然存在，且处处都有锁，读效率不高。
+2. CopyOnWriteArrayList能同时解决问题1和2，且没有锁，读效率高。但是每次作结构性修改的时候，都要将底层数据组
+复制一遍，耗费内存，且写效率受影响。应用于`多读少改`的场景比较合适。
 
 ## 1. Collections#synchronizedList同步包装方法
+Collections#synchronizedList同步包装方法能够解决问题2，但是问题1依然存在。  
+
+**原理：** 简单除暴的加锁，对读写方法全部用synchronized关键字进行同步。
+
 实现方法
 ```java
 public static <T> List<T> synchronizedList(List<T> list) {
@@ -90,7 +100,7 @@ synchronized (list) {//锁对象一定要是list
 }
 
 
-// 不正确的加锁方式
+// 不正确的加锁方式。关于这个问题，网上有很多讨论
 Object lock = new Object();
 List list = Collections.synchronizedList(new ArrayList());
     ...
@@ -102,3 +112,41 @@ synchronized (lock) {//锁对象不是list实例
         foo(i.next());
 }
 ```
+
+Collections.synchronizedList(List<T> list)还有一个重载的方法，可以供调用者从外部传入一个锁对象mutex：  
+```java
+static <T> List<T> synchronizedList(List<T> list, Object mutex) {
+    return (list instanceof RandomAccess ?
+            new SynchronizedRandomAccessList<>(list, mutex) :
+            new SynchronizedList<>(list, mutex));
+}
+```
+
+**总结：**  
+1. Collections.synchronizedList返回list对象的所有读写操作都用synchronized关键字进行了同步处理，且锁住的就是
+实例本身。因此，能够解决问题2，但是读的执行效率会受到影响。  
+2. Collections.synchronizedList方案不能解决问题1，如下代码还是会抛出ConcurrentModificationExcpetion异常。
+```java
+public void ConcurrentModificationExceptionTest(){
+    List<Integer> list = Collections.synchronizedList(new ArrayList<Integer>(3));
+    list.add(1);
+    list.add(2);
+    list.add(3);
+
+    synchronized (list){
+        Iterator<Integer> iterator = list.iterator();
+        while (iterator.hasNext()){
+            Integer it = iterator.next();
+            // 遍历的同时调用list本身的方法对其做结构性修改
+            if(it == 3)
+                list.remove(it); // 应该使用iterator.remove()来删除
+        }
+    }
+}
+```
+
+## 2. CopyOnWriteArrayList并发类
+JDK中提供了CopyOnWriteArrayList并发类能同时解决问题1和问题2。  
+
+**原理：** 
+

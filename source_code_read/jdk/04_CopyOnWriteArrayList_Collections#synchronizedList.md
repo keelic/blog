@@ -22,4 +22,4 @@ public static <T> List<T> synchronizedList(List<T> list) {
 }
 ```
 SynchronizedRandomAccessList和SynchronizedList类的继承关系：  
-![][./04_01.png]
+![](./04_01.png)

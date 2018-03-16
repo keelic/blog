@@ -15,7 +15,7 @@ ArrayList和LinkedList的实现不是同步的。主要存在两个方面的问�
 总的来说，它们有如下特点：  
 1. Collections#synchronizedList方案解决了问题2，但是问题1依然存在，且处处都有锁，读效率不高。
 2. CopyOnWriteArrayList能同时解决问题1和2，读操作没有加锁，读效率高。但是每次作结构性修改的时候，都要将底层数据组复制一遍，耗费内存，
-写效率会受影响。应用于`多读少改`的场景比较合适。
+写效率会受影响，应用于`多读少改`的场景比较合适。只能保证数据最终一致性，不能保证实时一致性。
 
 ## 1. Collections#synchronizedList同步包装方法
 Collections#synchronizedList同步包装方法能够解决问题2，但是问题1依然存在。  
@@ -123,7 +123,7 @@ static <T> List<T> synchronizedList(List<T> list, Object mutex) {
 
 **总结：**  
 1. Collections.synchronizedList返回list对象的所有读写操作都用synchronized关键字进行了同步处理，且锁住的就是
-实例本身。因此，能够解决问题2，但是读的执行效率会受到影响。  
+实例本身，实际上就是读写操作串行化了。因此，能够解决问题2，但是读的执行效率会受到影响。  
 2. Collections.synchronizedList方案不能解决问题1，如下代码还是会抛出ConcurrentModificationExcpetion异常。
 ```java
 public void ConcurrentModificationExceptionTest(){
@@ -148,4 +148,39 @@ public void ConcurrentModificationExceptionTest(){
 JDK中提供了CopyOnWriteArrayList并发类能同时解决问题1和问题2。  
 
 **原理：** 
+所有的读操作都在容器的当前数组上进行，读操作不加锁。所有的写操作不在容器当前数组上进行，而是采用CopyOnWrite机制，即`写时复制`。通俗来说就是对容器作写操作的时候，不会直接操作容器的当前数组，而是对当前数组copy出一个新数组，然后对这个新数组进行写操作，完成以后将容器的当前引用指向新数组。随后的读操作也会被转移到新数组上。
 
+add/remove/set操作都采用CopyOnWrite机制。写操作会加锁，防止多个线程并发写时会复制出多个数组副本，耗费内存，线程间的写还会互相覆盖。
+```java
+public boolean add(E e) {
+    // 写操作是需要加锁的，防止多个线程同时写会复制出多个副本
+    final ReentrantLock lock = this.lock;
+    lock.lock();
+    try {
+        Object[] elements = getArray();
+        int len = elements.length;
+	// 在当前数组基础上copy出一个新数组
+        Object[] newElements = Arrays.copyOf(elements, len + 1);
+	// 对新数组进行写操作
+        newElements[len] = e;
+	// 写操作完成后，将容器当前引用指向新的数组
+        setArray(newElements);
+        return true;
+    } finally {
+        lock.unlock();
+    }
+}
+```
+
+所有读操作在容器当前数组上进行，不加锁：
+```java
+public E get(int index) {
+    return get(getArray(), index);
+}
+```
+
+CopyOnWrite是一种程序设计中的优化策略，体现了`读写分离`的思想，能够同时解决问题1和问题2。  
+
+但是，CopyOnWrite有两个缺陷，在编程时需要注意：  
+1. 数据一致性问题。CopyOnWrite容器只能保证数据的最终一致性，不能保证数据的实时一致性。所以如果你希望写入的的数据，马上能读到，请不要使用CopyOnWrite容器。  
+2. 内存占用问题。在写操作发生时，容器中会存在两份数据`（用于读的当前数组，以及用于写的数组副本）`。

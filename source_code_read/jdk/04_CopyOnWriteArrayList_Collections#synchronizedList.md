@@ -14,8 +14,8 @@ ArrayList和LinkedList的实现不是同步的。主要存在两个方面的问�
 围绕着解决这两个问题，jdk提供了Collections#synchronizedList同步包装方法和CopyOnWriteArrayList并发类。  
 总的来说，它们有如下特点：  
 1. Collections#synchronizedList方案解决了问题2，但是问题1依然存在，且处处都有锁，读效率不高。
-2. CopyOnWriteArrayList能同时解决问题1和2，且没有锁，读效率高。但是每次作结构性修改的时候，都要将底层数据组
-复制一遍，耗费内存，且写效率受影响。应用于`多读少改`的场景比较合适。
+2. CopyOnWriteArrayList能同时解决问题1和2，且没有锁，读效率高。但是每次作结构性修改的时候，都要将底层数据组复制一遍，耗费内存，
+写效率会受影响。应用于`多读少改`的场景比较合适。
 
 ## 1. Collections#synchronizedList同步包装方法
 Collections#synchronizedList同步包装方法能够解决问题2，但是问题1依然存在。  

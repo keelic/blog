@@ -8,8 +8,7 @@
 
 ## 0. 概述
 ArrayList和LinkedList的实现不是同步的。主要存在两个方面的问题：
-1. 在一方对非同步list进行遍历，而另一方对其进行修改时`（包括调用list本身的方法修改）`，
-会抛出ConcurrentModificationExcpetion异常。  
+1. 在一方对非同步list进行遍历，而另一方对其进行修改时`（包括调用list本身的方法修改）`，会抛出ConcurrentModificationExcpetion异常。  
 2. 多个线程对非同步list进行并发修改时，会导致数据丢失。
 
 围绕着解决这两个问题，jdk提供了Collections#synchronizedList同步包装方法和CopyOnWriteArrayList并发类。  

@@ -14,8 +14,8 @@ ConcurrentLinkedQueue是一个线程安全的队列。实现线程安全的队�
 
 CAS包含了`读取-比较-写入`三个步骤，且**原子性地完成这三个步骤**：  
 1. 从内存中读取变量item的当前值，假设为itemVal；
-2. 比较itemVal是否与期望值expectVal相等：
-3. 如果itemVal!=expectVal，则直接返回操作失败；如果itemVal==expectVal，则将item的变量设置为值val；  
+2. 比较itemVal是否与期望值expectVal是否相等：
+3. 如果itemVal != expectVal，则直接返回操作失败；如果itemVal == expectVal，则将item的变量设置为值val；  
 
 这三个过程可以用如下java代码进行模拟：
 ```java

@@ -12,10 +12,10 @@ ConcurrentLinkedQueue是一个线程安全的队列。实现线程安全的队�
 ## 1. CAS原子操作
 现代的多处理器系统大多提供了特殊的指令来管理对共享数据的并发访问，这些指令能实现原子化的`读-改-写`操作。现代典型的多处理器系统通常支持两种同步原语（机器级别的原子指令）：CAS 和 LL/SC。Intel，AMD 和 SPARC 的多处理器系统支持`比较并交换`（compare-and-swap，CAS）原子指令。  
 
-CAS包含了`读取-比较-写入`三个步骤：  
+CAS包含了`读取-比较-写入`三个步骤，且##原子性地完成这三个步骤## ：  
 1. 从内存中读取变量item的当前值，假设为itemVal；
 2. 比较itemVal是否与期望值expectVal相等：
-3. 如果itemVal!=expectVal，则直接返回操作失败；如果itemVal==expectVal，则将item的变量设置为值val;  
+3. 如果itemVal!=expectVal，则直接返回操作失败；如果itemVal==expectVal，则将item的变量设置为值val；  
 ```java
 // 锁对象
 public static final Object lock = new Object();

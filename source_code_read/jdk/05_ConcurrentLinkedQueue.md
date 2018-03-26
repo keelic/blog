@@ -44,3 +44,5 @@ public boolean simulateCAS(item, expectVal, val){
     }
 }
 ```
+
+以上是利用锁来模拟CAS执行过程，便于理解。而现代处理器所支持的CAS指令不需要引入锁，而是由硬件原子性地完成`读取-比较-写入`三个过程，具有相当高的并发性特性。

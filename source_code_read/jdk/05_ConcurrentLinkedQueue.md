@@ -18,19 +18,19 @@ ConcurrentLinkedQueue是一个线程安全的队列。实现线程安全的队�
 public static final Object lock = new Object();
 
 public boolean cas(item, expectVal, val){
-  synchronized(lock){
-    // 1.读取共享变量item的当前值
-    itemVal = getCurrentValueOfVariable(item);
-    
-    // 2.判断变量当前值是否与期望值相等
-    if(itemVal != expectVal){
-      // 2.1 如果不相等，则此次cas操作失败
-      return false;
+    synchronized(lock){
+        // 1.读取共享变量item的当前值
+        itemVal = getCurrentValueOfVariable(item);
+
+        // 2.判断变量当前值是否与期望值相等
+        if(itemVal != expectVal){
+            // 2.1 如果不相等，则此次cas操作失败
+            return false;
+        }
+
+        // 2.2 如果相等，则将共享变量的值设置为val
+        setValueOfVariable(item, val);
+        return true; 
     }
-    
-    // 2.2 如果相等，则将共享变量的值设置为val
-    setValueOfVariable(item, val);
-    return true; 
-  }
 }
 ```

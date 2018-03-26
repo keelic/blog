@@ -10,14 +10,23 @@
 ConcurrentLinkedQueue是一个线程安全的队列。实现线程安全的队列有两种方式：`阻塞算法`和`非阻塞算法`。阻塞算法可以使用`加锁`的方式来实现，可以使用一个锁（出队/入队共同使用），也可以使用两个锁（出队/入队各自使用一个）。非阻塞算法可以使用循环`CAS`(Compare-And-Set)的方式。JDK8中ConcurrentLinkedQueue就是一个使用非阻塞算法实现的线程安全的队列。  
 
 ## 1. CAS原子操作
-现代的多处理器系统大多提供了特殊的指令来管理对共享数据的并发访问，这些指令能实现原子化的`读-改-写`操作。现代典型的多处理器系统通常支持两种同步原语（机器级别的原子指令）：CAS 和 LL/SC。Intel，AMD 和 SPARC 的多处理器系统支持`比较并交换`（compare-and-swap，CAS）指令。  
+现代的多处理器系统大多提供了特殊的指令来管理对共享数据的并发访问，这些指令能实现原子化的`读-改-写`操作。现代典型的多处理器系统通常支持两种同步原语（机器级别的原子指令）：CAS 和 LL/SC。Intel，AMD 和 SPARC 的多处理器系统支持`比较并交换`（compare-and-swap，CAS）原子指令。  
 
-
+CAS包含的操作步骤：  
+1. 从内存中读取变量item的当前值，假设为itemVal；
+2. 比较itemVal是否与期望值expectVal相等：
+2.1. 如果itemVal!=expectVal，则直接返回操作失败；
+2.2. 如果itemVal==expectVal，则将item的变量设置为值val;  
 ```java
 // 锁对象
 public static final Object lock = new Object();
 
-public boolean cas(item, expectVal, val){
+/**
+ * item 要修改值的变量
+ * expectVal 期望值
+ * val 设定值
+ */
+public boolean simulateCAS(item, expectVal, val){
     synchronized(lock){
         // 1.读取共享变量item的当前值
         itemVal = getCurrentValueOfVariable(item);
